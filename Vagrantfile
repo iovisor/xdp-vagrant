@@ -16,6 +16,15 @@ Vagrant.configure('2') do |config|
     libvirt.nic_model_type = "e1000"
   end
 
+  config.vm.provider :virtualbox do |vb|
+    vb.memory = 2048
+    vb.cpus = 2
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
+    vb.customize ["setextradata", :id, "VBoxInternal/CPUM/SSE4.1", "1"]
+    vb.customize ["setextradata", :id, "VBoxInternal/CPUM/SSE4.2", "1"]
+    config.vm.synced_folder ".", "/vagrant", type: "rsync"
+  end
+
   config.vm.provision :shell, :privileged => true, :path => "setup-apt.sh"
   config.vm.provision :shell, :privileged => true, :path => "setup-kernel.sh"
   config.vm.provision :reload
